@@ -8,8 +8,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    $username = $data['username'] ?? null;
+    $password = $data['password'] ?? null;
 
     if (empty($username) || empty($password)) {
         echo json_encode(['success' => false, 'message' => 'All fields are required.']);

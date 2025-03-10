@@ -8,10 +8,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $data = json_decode(file_get_contents("php://input"), true); // Get JSON input
+    
+    $name = $data['name'] ?? null;
+    $username = $data['username'] ?? null;
+    $email = $data['email'] ?? null;
+    $password = isset($data['password']) ? password_hash($data['password'], PASSWORD_DEFAULT) : null;
 
     if (empty($name) || empty($username) || empty($email) || empty($password)) {
         echo json_encode(['success' => false, 'message' => 'All fields are required.']);
