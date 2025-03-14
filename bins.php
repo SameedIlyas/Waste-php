@@ -8,7 +8,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 $threshold = 80; // Define the fill level threshold
-
+/*
 function send_email($to, $subject, $message) {
     $mail = new PHPMailer(true);
     try {
@@ -31,6 +31,7 @@ function send_email($to, $subject, $message) {
         error_log("Email Error: " . $mail->ErrorInfo);
     }
 }
+    */
 
 // Fetch all bins
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
