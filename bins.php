@@ -1,7 +1,7 @@
 <?php
 require 'db_connection.php';
-require 'PHPMailer/PHPMailer.php';
-require 'PHPMailer/SMTP.php';
+//require 'PHPMailer/PHPMailer.php';
+//require 'PHPMailer/SMTP.php';
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
