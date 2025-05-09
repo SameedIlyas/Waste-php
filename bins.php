@@ -1,37 +1,13 @@
 <?php
 require 'db_connection.php';
-//require 'PHPMailer/PHPMailer.php';
-//require 'PHPMailer/SMTP.php';
+require 'send_email.php';
+
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 $threshold = 80; // Define the fill level threshold
-/*
-function send_email($to, $subject, $message) {
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = getenv('EMAIL_USER'); 
-        $mail->Password = getenv('EMAIL_PASS'); 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
-
-        $mail->setFrom('your-email@gmail.com', 'Smart Waste System');
-        $mail->addAddress($to);
-        $mail->isHTML(true);
-        $mail->Subject = $subject;
-        $mail->Body = $message;
-
-        $mail->send();
-    } catch (Exception $e) {
-        error_log("Email Error: " . $mail->ErrorInfo);
-    }
-}
-    */
 
 // Fetch all bins
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -88,10 +64,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
 
                 if ($send_notification) {
-                    // Store notification in database instead of sending immediately
+                    // Store the notification
                     $stmt = $conn->prepare("INSERT INTO notifications (bin_id, message, email_sent, created_at) VALUES (?, ?, 0, NOW())");
                     $stmt->bind_param("is", $bin_id, $message);
                     $stmt->execute();
+                
+                    // Fetch all user emails
+                    $user_result = $conn->query("SELECT email FROM users");
+                    if ($user_result->num_rows > 0) {
+                        while ($user = $user_result->fetch_assoc()) {
+                            send_email($user['email'], 'Smart Waste Notification', $message);
+                        }
+                
+                        // Update email_sent flag to 1
+                        $stmt = $conn->prepare("UPDATE notifications SET email_sent = 1 WHERE bin_id = ? AND message = ? ORDER BY created_at DESC LIMIT 1");
+                        $stmt->bind_param("is", $bin_id, $message);
+                        $stmt->execute();
+                    }
                 }
 
                 echo json_encode(['success' => true, 'message' => 'Bin updated successfully' . ($send_notification ? ', notification stored.' : '.')]);

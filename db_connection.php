@@ -1,9 +1,11 @@
 <?php
-$host = "waste-segregation.mysql.database.azure.com"; // Azure MySQL host
-$username = "waste_user"; // Your database username
-$password = "Password123"; // Your database password
-$database = "waste-segregation"; // Your database name
-$port = 3306; // Default MySQL port
+
+$host = getenv('DB_HOST'); // Azure MySQL host
+$username = getenv('DB_USERNAME'); // Your database username
+$password = getenv('DB_PASSWORD'); // Your database password
+$database = getenv('DB_NAME'); // Your database name
+$port = getenv('DB_PORT'); // Default MySQL port
+
 
 // Create a new MySQLi instance and connect to the database
 $conn = new mysqli($host, $username, $password, $database, $port);
