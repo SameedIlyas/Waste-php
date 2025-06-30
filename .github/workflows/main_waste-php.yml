@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         if: steps.check_files.outputs.files_exists == 'true'
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
-      - name: Prepare deploy folder
+      - name: Prepare and zip files for Azure deployment
         run: |
           mkdir deploy
           shopt -s extglob
@@ -46,6 +46,7 @@ jobs:
         with:
           name: php-app
           path: release.zip
+
 
   deploy:
     runs-on: ubuntu-latest
